@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-// URL base da API (na Etapa 9 você substituirá esta URL pela do Render)
-const API_URL = 'http://localhost:3000/api/notes';
+// URL da API publicada no Render
+const API_URL = 'https://projeto-notas-4em4.onrender.com/api/notes';
 
 function App() {
   const [notes, setNotes] = useState([]);
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [titulo, setTitulo] = useState('');
+  const [texto, setTexto] = useState('');
   const [editingId, setEditingId] = useState(null);
 
   // 1. READ - Buscar notas
@@ -27,20 +27,20 @@ function App() {
   // 2. CREATE / UPDATE - Salvar ou atualizar nota
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!title || !content) return alert('Preencha todos os campos!');
+    if (!titulo || !texto) return alert('Preencha todos os campos!');
 
     try {
       if (editingId) {
         // Atualizar nota existente (PUT)
-        await axios.put(`${API_URL}/${editingId}`, { title, content });
+        await axios.put(`${API_URL}/${editingId}`, { titulo, texto });
         setEditingId(null);
       } else {
         // Criar nova nota (POST)
-        await axios.post(API_URL, { title, content });
+        await axios.post(API_URL, { titulo, texto });
       }
 
-      setTitle('');
-      setContent('');
+      setTitulo('');
+      setTexto('');
       fetchNotes(); // Recarrega a lista
     } catch (error) {
       console.error('Erro ao salvar nota:', error);
@@ -50,15 +50,15 @@ function App() {
   // Prepara os campos para edição
   const handleEdit = (note) => {
     setEditingId(note.id);
-    setTitle(note.title);
-    setContent(note.content);
+    setTitulo(note.titulo);
+    setTexto(note.texto);
   };
 
   // Cancela o modo de edição
   const handleCancelEdit = () => {
     setEditingId(null);
-    setTitle('');
-    setContent('');
+    setTitulo('');
+    setTexto('');
   };
 
   // 3. DELETE - Excluir nota
@@ -77,20 +77,20 @@ function App() {
     <div style={{ maxWidth: '600px', margin: '40px auto', padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1>Gerenciador de Notas</h1>
 
-      {/* Formulario de Cadastro / Edição */}
+      {/* Formulário de Cadastro / Edição */}
       <form onSubmit={handleSubmit} style={{ marginBottom: '30px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <h2>{editingId ? 'Editar Nota' : 'Nova Nota'}</h2>
         <input
           type="text"
           placeholder="Título da nota"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          value={titulo}
+          onChange={(e) => setTitulo(e.target.value)}
           style={{ padding: '8px', fontSize: '16px' }}
         />
         <textarea
           placeholder="Conteúdo da nota"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
+          value={texto}
+          onChange={(e) => setTexto(e.target.value)}
           rows="4"
           style={{ padding: '8px', fontSize: '16px' }}
         />
@@ -114,8 +114,8 @@ function App() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
           {notes.map((note) => (
             <div key={note.id} style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '15px' }}>
-              <h3>{note.title}</h3>
-              <p>{note.content}</p>
+              <h3>{note.titulo}</h3>
+              <p>{note.texto}</p>
               <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
                 <button onClick={() => handleEdit(note)}>Editar</button>
                 <button onClick={() => handleDelete(note.id)}>Excluir</button>
